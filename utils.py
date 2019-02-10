@@ -4,6 +4,7 @@ import numpy as np
 from keras.utils.np_utils import to_categorical
 from keras.preprocessing.sequence import pad_sequences
 
+from profile import track
 
 class Token:
 
@@ -48,6 +49,7 @@ class TSVLoader:
         except ValueError:
             return 0
 
+    @track
     def load(self, filename):
         tree_id = 0
         trees = []

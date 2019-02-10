@@ -8,6 +8,8 @@ from keras.utils.np_utils import to_categorical
 
 from mst import mst
 
+from profile import track
+
 class EmbeddingLoader():
 
     def __init__(self, params):
@@ -22,6 +24,7 @@ class EmbeddingLoader():
         self.embed_size = None
         self.vocab_size = None
 
+    @track
     def load_embedding(self, embedding_file):
         if embedding_file.endswith('.gz'):
             f = gzip.open(embedding_file, 'rb')
@@ -32,7 +35,7 @@ class EmbeddingLoader():
 
         self.embed_size = n_col
         self.vocab_size = n_row + self.offset
-        self.word_vectors = np.zeros((self.vocab_size, self.embed_size))
+        self.word_vectors = np.zeros((self.vocab_size, self.embed_size), dtype='float32')
 
         idx = self.offset
         for line in f:
@@ -63,6 +66,8 @@ class EmbeddingLoader():
             )
 
         f.close()
+
+        print ('Embeddings loaded')
 
 
 class WordEmbedEncoder(BaseEstimator, TransformerMixin):

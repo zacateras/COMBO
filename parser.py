@@ -60,13 +60,13 @@ class Parser(BaseEstimator, TransformerMixin, KerasModel):
                 batch[col_idx].append(raw[col_idx][row_idx])
 
             if words_batch > self.params.batch_size:
-                output_batch = [pad_sequences(x, padding='post') for x in batch]
+                output_batch = [pad_sequences(x, padding='post', dtype='uint8') for x in batch]
                 batch = [[] for _ in range(n_cols)]
                 output.append(output_batch)
                 words_batch = 0
 
         if words_batch > 0:
-                output_batch = [pad_sequences(x, padding='post') for x in batch]
+                output_batch = [pad_sequences(x, padding='post', dtype='uint8') for x in batch]
                 output.append(output_batch)
 
         return output
@@ -86,7 +86,7 @@ class Parser(BaseEstimator, TransformerMixin, KerasModel):
                 batch[col_idx].append(raw[col_idx][row_idx])
 
             if words_batch > self.params.batch_size:
-                padded_batch = [pad_sequences(x, padding='post') for x in batch]
+                padded_batch = [pad_sequences(x, padding='post', dtype='uint8') for x in batch]
                 output_batch = []
 
                 for target, padded_target in zip(self.params.targets, padded_batch):
