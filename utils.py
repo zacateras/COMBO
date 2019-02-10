@@ -55,16 +55,16 @@ class TSVLoader:
         comments = []
         with open(filename, 'r') as f:
             for line in f:
+                if line[0] == '#':
+                    comments.append(line.strip('\n'))
+                    continue
+
                 ls = line.strip().split('\t')
                 
                 if line == '\n':
                     if max([self.safe_int(t.fields['head']) for t in tree.tokens]) < len(tree.tokens):
                         trees.append(tree)
                     tree = None
-                    continue
-                
-                if line[0] == '#':
-                    comments.append(line.strip('\n'))
                     continue
                 
                 if tree is None:

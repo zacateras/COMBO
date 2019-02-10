@@ -91,11 +91,11 @@ class Parser(BaseEstimator, TransformerMixin, KerasModel):
 
                 for target, padded_target in zip(self.params.targets, padded_batch):
                     if target == 'head':
-                        output_batch.append(to_categorical(padded_target, num_classes=padded_target.shape[1]))
+                        output_batch.append(to_categorical(padded_target, num_classes=padded_target.shape[1], dtype='uint8'))
                     elif target in ['feats', 'sent']:
                         output_batch.append(padded_target)
                     else:
-                        output_batch.append(to_categorical(padded_target, num_classes=self.targets_factory.encoders[target].vocab_size))
+                        output_batch.append(to_categorical(padded_target, num_classes=self.targets_factory.encoders[target].vocab_size, dtype='uint8'))
 
                 batch = [[] for _ in range(n_cols)]
                 output.append(output_batch)
@@ -107,11 +107,11 @@ class Parser(BaseEstimator, TransformerMixin, KerasModel):
 
             for target, padded_target in zip(self.params.targets, padded_batch):
                 if target == 'head':
-                    output_batch.append(to_categorical(padded_target, num_classes=padded_target.shape[1]))
+                    output_batch.append(to_categorical(padded_target, num_classes=padded_target.shape[1], dtype='uint8'))
                 elif target in ['feats', 'sent']:
                     output_batch.append(padded_target)
                 else:
-                    output_batch.append(to_categorical(padded_target, num_classes=self.targets_factory.encoders[target].vocab_size))
+                    output_batch.append(to_categorical(padded_target, num_classes=self.targets_factory.encoders[target].vocab_size, dtype='uint8'))
 
             batch = [[] for _ in range(n_cols)]
             output.append(output_batch)

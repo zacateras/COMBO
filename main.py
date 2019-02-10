@@ -64,6 +64,8 @@ def get_comma_separated_float_args(option, opt, value, parser):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
+    parser.add_argument("-m", dest="m")
+
     parser.add_argument(
         "--mode", dest="mode", help="Mode of parser (train or predict)",
         choices=['train', 'autotrain', 'multitrain', 'evaluate', 'predict',

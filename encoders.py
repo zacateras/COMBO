@@ -8,7 +8,6 @@ from keras.utils.np_utils import to_categorical
 
 from mst import mst
 
-
 class EmbeddingLoader():
 
     def __init__(self, params):
@@ -43,7 +42,7 @@ class EmbeddingLoader():
                 print('unicode error', line.split()[0])
 
             try:
-                ls = line.strip().split()
+                ls = line.rstrip().split(' ')
                 word = ls[0]
                 if self.params.lower:
                     word = word.lower()
@@ -51,8 +50,8 @@ class EmbeddingLoader():
                 vector = np.array(ls[1:])
                 self.word2idx[word] = idx
                 self.word_vectors[idx, :] = vector
-            except:
-                print('other error', word)
+            except Exception as ex:
+                print('other error', word, ex)
 
             idx += 1
 
