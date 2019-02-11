@@ -15,7 +15,7 @@
                 "-m", "memory-profiler",
                 "--mode", "autotrain",
                 "--train", "tmp/ud-treebanks-v2.3/UD_Polish-LFG/pl_lfg-ud-train.conllu",
-                "--valid", "tmp/ud-treebanks-v2.3/UD_Polish-LFG/pl_lfg-ud-train.conllu",
+                "--valid", "tmp/ud-treebanks-v2.3/UD_Polish-LFG/pl_lfg-ud-dev.conllu",
                 "--embed", "tmp/cc.pl.300.vec.gz",
                 "--model", "model_name.pkl",
                 "--force_trees"

@@ -5,6 +5,7 @@ from copy import deepcopy
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
+from keras.callbacks import TensorBoard, ModelCheckpoint
 from keras.utils.np_utils import to_categorical
 from keras.preprocessing.sequence import pad_sequences
 
@@ -18,6 +19,7 @@ from encoders import (
     TargetsFactory,
 )
 
+from time import gmtime, strftime
 
 class Parser(BaseEstimator, TransformerMixin, KerasModel):
 
@@ -42,7 +44,8 @@ class Parser(BaseEstimator, TransformerMixin, KerasModel):
             n_batches = len(batches)
             batch_idx = 0
             while True:
-                yield batches[batch_idx]
+                batch = batches[batch_idx]
+                yield (batch[0], batch[1], [np.array(w) for w in batch[2]])
                 batch_idx = (batch_idx + 1) % n_batches
 
     def batchify_X(self, trees):
@@ -175,25 +178,19 @@ class Parser(BaseEstimator, TransformerMixin, KerasModel):
             ),
         )
 
-        try:
-            for epoch_idx in range(self.params.epochs):
-                if shuffle:
-                    random.shuffle(batches)
+        generator = self.create_generator(batches, multiple=True)
+        run_name = strftime("%Y%m%dT%H%M%S", gmtime())
 
-                for batch_idx, batch in enumerate(batches):
-                    losses = self.model.train_on_batch(
-                        x=batch[0],
-                        y=batch[1],
-                        sample_weight=[np.array(w) for w in batch[2]],
-                        # class_weight=['auto']*len(self.params.targets),
-                    )
-                    if not isinstance(losses, list):
-                        losses = [losses]
+        callbacks = [
+            TensorBoard('out/{}/'.format(run_name), update_freq='batch'),
+            ModelCheckpoint('out/{}/weights'.format(run_name) + '.epoch{epoch:02d}-loss{loss:.2f}.hdf5', monitor='loss', verbose=1, save_best_only=True, mode='max')
+        ]
 
-                    print(epoch_idx, batch_idx, list(zip(self.model.metrics_names, losses)))
-
-        except KeyboardInterrupt:
-            pass
+        self.model.fit_generator(
+            generator,
+            callbacks=callbacks,
+            steps_per_epoch=len(batches),
+            epochs=self.params.epochs)
 
     def predict(self, trees):
         trees = sorted(trees, key=lambda x: len(x.tokens))
